@@ -2,6 +2,10 @@ name: Super-Linter
 
 on: push
 
+permissions:
+  contents: read
+  status: write
+
 jobs:
   super-lint:
     name: Lint code base
