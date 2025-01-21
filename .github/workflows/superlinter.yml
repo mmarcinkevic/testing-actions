@@ -19,4 +19,4 @@ jobs:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           YAML_PRETTIER_FILES: false  # Disable YAML Prettier checks
-          VALIDATE_MARKDOWN: false  # Disable Markdown validation
+          DISABLE_LINTERS: MARKDOWN_PRETTIER  # Disable only Markdown Prettier
