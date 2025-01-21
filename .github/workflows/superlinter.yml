@@ -4,7 +4,6 @@ on: push
 
 permissions:
   contents: read
-  status: write
 
 jobs:
   super-lint:
