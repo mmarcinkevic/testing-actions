@@ -101,7 +101,6 @@ def remove_user_from_group(headers, userID, group_id):
     response = requests.delete(url, headers=headers)
     return response.status_code == 204
 
-
 def send_jira_internal_note(issue_key, logged_messages):
     url = f"https://vinted.atlassian.net/rest/api/2/issue/{issue_key}/comment"
     auth = HTTPBasicAuth(JIRA_AUTH, JIRA_AUTH_TOKEN)
