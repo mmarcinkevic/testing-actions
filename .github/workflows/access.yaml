@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [run-hello-world]
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   execute-script:
     runs-on: ubuntu-latest
