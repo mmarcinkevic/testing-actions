@@ -5,13 +5,14 @@ from requests.auth import HTTPBasicAuth
 import jwt
 import time
 
-# Environment variables setup
-OKTA_DOMAIN = os.getenv('OKTA_DOMAIN')
-CLIENT_ID = os.getenv('CLIENT_ID')
-KID = os.getenv('KID')
-JIRA_AUTH = os.getenv('JIRA_AUTH')
-JIRA_AUTH_TOKEN = os.getenv('JIRA_AUTH_TOKEN')
-PRIVATE_KEY = os.getenv('PRIVATE_KEY')
+# Read environment variables
+OKTA_DOMAIN = os.environ['OKTA_DOMAIN']
+CLIENT_ID = os.environ['CLIENT_ID']
+KID = os.environ['KID']
+JIRA_AUTH = os.environ['JIRA_AUTH']
+JIRA_AUTH_TOKEN = os.environ['JIRA_AUTH_TOKEN']
+PRIVATE_KEY = os.environ['PRIVATE_KEY']
+INPUT_DATA = json.loads(os.environ['INPUT_DATA'])
 
 def create_jwt(client_id, private_key, kid):
     current_time = int(time.time())
@@ -47,7 +48,6 @@ def log_message(message, logged_messages):
         formatted_message = message.replace("[SUCCESS]", "{color:green}[SUCCESS]{color}")
     elif "[INFO]" in message:
         formatted_message = message.replace("[INFO]", "{color:orange}[INFO]{color}")
-    
     print(formatted_message)
     logged_messages.append(formatted_message)
 
@@ -98,9 +98,7 @@ def send_jira_internal_note(issue_key, logged_messages):
         "Accept": "application/json",
         "Content-Type": "application/json"
     }
-
     comments_to_jira = "\n".join(logged_messages)
-    
     payload = json.dumps({
         "body": comments_to_jira,
         "properties": [
@@ -112,41 +110,37 @@ def send_jira_internal_note(issue_key, logged_messages):
             }
           ]
     })
-
     response = requests.post(url, data=payload, headers=headers, auth=auth)
     if response.status_code != 201:
         print(f"Failed to send comment to Jira: {response.status_code} {response.text}")
 
 def main():
-    # Parse input data
-    input_data = json.loads(os.getenv('INPUT_DATA'))
     access_token = get_access_token()
     headers = {'Authorization': f'Bearer {access_token}'}
 
-    requestedOktaGroups = input_data.get("requestedOktaGroups", "")
-    emailAddressReporter = input_data.get("emailAddressReporter", "")
-    emailAddressOther = input_data.get("emailAddressOther", "")
-    accessFor = input_data.get("accessFor", "")
-    issue_key = input_data.get("issueKey", "")
-    a_messages = input_data.get("asset_messages", "")
-    accesstype = input_data.get("accesstype", "")
-    requestedCustomGroups = input_data.get("requestedCustomGroups", "")
+    requested_okta_groups = INPUT_DATA.get("requestedOktaGroups", "").split(', ')
+    email_address_reporter = INPUT_DATA.get("emailAddressReporter", "")
+    email_address_other = INPUT_DATA.get("emailAddressOther", "")
+    access_for = INPUT_DATA.get("accessFor", "")
+    issue_key = INPUT_DATA.get("issueKey", "")
+    a_messages = INPUT_DATA.get("asset_messages", "")
+    access_type = INPUT_DATA.get("accessType", "")
+    requested_custom_groups = INPUT_DATA.get("requestedCustomGroups", "")
 
-    if accessFor == "For me only":
-        emailAddresses = emailAddressReporter.split(', ')
-    elif accessFor == "Other user(s)":
-        emailAddresses = emailAddressOther.split(', ')
-    else:
-        emailAddresses = []
+    email_addresses = []
+    if access_for == "For me only":
+        email_addresses = email_address_reporter.split(', ')
+    elif access_for == "Other user(s)":
+        email_addresses = email_address_other.split(', ')
 
-    combined_groups = requestedOktaGroups + (', ' if requestedOktaGroups and requestedCustomGroups else '') + requestedCustomGroups
+    combined_groups = requested_okta_groups + (', ' if requested_okta_groups and requested_custom_groups else '') + requested_custom_groups
     groups = combined_groups.split(', ')
     
     logged_messages = []
 
-    if accesstype == "Assign access":
-        log_message(f"Action: Access request (Assign access)\n\nAction Log:", logged_messages)
-        for email in emailAddresses:
+    if access_type == "Assign access":
+        log_message("Action: Access request (Assign access)\n\nAction Log:", logged_messages)
+        for email in email_addresses:
             userID, _ = get_user_id_and_display_name_by_email(headers, email.strip())
             if userID:
                 for group in groups:
@@ -163,9 +157,9 @@ def main():
             else:
                 log_message(f"[FAILURE] No user found with email: *{email}*", logged_messages)
     
-    elif accesstype == "Remove access":
-        log_message(f"Action: Access request (Remove access)\n\nAction Log:", logged_messages)
-        for email in emailAddresses:
+    elif access_type == "Remove access":
+        log_message("Action: Access request (Remove access)\n\nAction Log:", logged_messages)
+        for email in email_addresses:
             userID, _ = get_user_id_and_display_name_by_email(headers, email.strip())
             if userID:
                 for group in groups:
@@ -185,8 +179,7 @@ def main():
     if a_messages:
         asset_messages_list = a_messages.split(',')
         for message in asset_messages_list:
-            info_message = f"[INFO] {message.strip()}"
-            log_message(info_message, logged_messages)
+            log_message(f"[INFO] {message.strip()}", logged_messages)
 
     send_jira_internal_note(issue_key, logged_messages)
     print("Script completed successfully.")
