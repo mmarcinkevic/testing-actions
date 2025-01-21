@@ -15,7 +15,16 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'  # You can specify the Python version you need
+        python-version: '3.x'
 
     - name: Run Python script
-      run: python scripts/main.py
+      run: |
+        python scripts/main.py \
+        --email-address-reporter "${{ github.event.client_payload.emailAddressReporter }}" \
+        --email-address-other "${{ github.event.client_payload.emailAddressOther }}" \
+        --access-for "${{ github.event.client_payload.accessFor }}" \
+        --requested-okta-groups "${{ github.event.client_payload.requestedOktaGroups }}" \
+        --asset-messages "${{ github.event.client_payload.asset_messages }}" \
+        --accesstype "${{ github.event.client_payload.accesstype }}" \
+        --requested-custom-groups "${{ github.event.client_payload.requestedCustomGroups }}" \
+        --issue-key "${{ github.event.client_payload.issueKey }}"
