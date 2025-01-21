@@ -18,4 +18,4 @@ jobs:
         python-version: '3.12'  # You can specify the Python version you need
 
     - name: Run Python script
-      run: python main.py
+      run: python scripts/main.py
