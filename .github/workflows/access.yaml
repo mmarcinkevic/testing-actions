@@ -1,9 +1,8 @@
-name: Run Code Without GCP
+name: Trigger via Repository Dispatch
 
 on:
-  push:
-    branches:
-      - main
+  repository_dispatch:
+    types: [my_custom_event]
 
 jobs:
   run-the-script:
@@ -16,7 +15,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.10'
 
     - name: Install dependencies
       run: |
