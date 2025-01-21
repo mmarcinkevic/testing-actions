@@ -1,11 +1,11 @@
-name: Run Access Script
+name: Run Python Script
 
 on:
   repository_dispatch:
-    types: [access_request]
+    types: [run-hello-world]
 
 jobs:
-  run-script:
+  execute-script:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,22 +13,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.12'  # You can specify the Python version you need
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r scripts/requirements.txt
-
-    - name: Run main.py
-      env:
-        OKTA_DOMAIN: ${{ secrets.OKTA_DOMAIN }}
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        KID: ${{ secrets.KID }}
-        JIRA_AUTH: ${{ secrets.JIRA_AUTH }}
-        JIRA_AUTH_TOKEN: ${{ secrets.JIRA_AUTH_TOKEN }}
-        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        INPUT_DATA: ${{ github.event.client_payload.input_data }}
-      run: python scripts/main.py
+    - name: Run Python script
+      run: python main.py
