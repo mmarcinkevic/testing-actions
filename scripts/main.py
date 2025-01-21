@@ -1,5 +1,6 @@
 import argparse
 
+
 def main(args):
     print(f"Email Address Reporter: {args.email_address_reporter}")
     print(f"Email Address Other: {args.email_address_other}")
