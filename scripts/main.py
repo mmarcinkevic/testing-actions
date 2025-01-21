@@ -1,15 +1,22 @@
 import argparse
 
+"""
+Module for processing command line arguments and displaying information.
+"""
 
-def main(args):
-    print(f"Email Address Reporter: {args.email_address_reporter}")
-    print(f"Email Address Other: {args.email_address_other}")
-    print(f"Access For: {args.access_for}")
-    print(f"Requested Okta Groups: {args.requested_okta_groups}")
-    print(f"Asset Messages: {args.asset_messages}")
-    print(f"Access Type: {args.accesstype}")
-    print(f"Requested Custom Groups: {args.requested_custom_groups}")
-    print(f"Issue Key: {args.issue_key}")
+
+def main(arguments):
+    """
+    Prints out details from parsed command line arguments.
+    """
+    print(f"Email Address Reporter: {arguments.email_address_reporter}")
+    print(f"Email Address Other: {arguments.email_address_other}")
+    print(f"Access For: {arguments.access_for}")
+    print(f"Requested Okta Groups: {arguments.requested_okta_groups}")
+    print(f"Asset Messages: {arguments.asset_messages}")
+    print(f"Access Type: {arguments.accesstype}")
+    print(f"Requested Custom Groups: {arguments.requested_custom_groups}")
+    print(f"Issue Key: {arguments.issue_key}")
 
 
 if __name__ == "__main__":
