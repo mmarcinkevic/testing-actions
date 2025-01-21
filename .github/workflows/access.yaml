@@ -1,12 +1,8 @@
-name: Access Request Script
+name: Run Access Script
 
 on:
-  workflow_dispatch:  # Allows manual triggering from GitHub UI
-  # Uncomment the lines below if you want to trigger based on issue or schedule
-  # issues:
-  #   types: [opened, edited]
-  # schedule:
-  #   - cron: '30 3 * * *'  # Adjust your schedule as needed
+  repository_dispatch:
+    types: [access_request]
 
 jobs:
   run-script:
@@ -19,18 +15,20 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.12
+        python-version: '3.12'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r scripts/requirements.txt
 
-    - name: Run the script
+    - name: Run main.py
       env:
         OKTA_DOMAIN: ${{ secrets.OKTA_DOMAIN }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         KID: ${{ secrets.KID }}
         JIRA_AUTH: ${{ secrets.JIRA_AUTH }}
         JIRA_AUTH_TOKEN: ${{ secrets.JIRA_AUTH_TOKEN }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        INPUT_DATA: ${{ github.event.client_payload.input_data }}
       run: python scripts/main.py
