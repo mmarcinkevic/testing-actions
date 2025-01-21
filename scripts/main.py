@@ -1,8 +1,8 @@
-import argparse
+"""
+This module processes command line arguments and displays information.
+"""
 
-"""
-Module for processing command line arguments and displaying information.
-"""
+import argparse
 
 
 def main(arguments):
