@@ -1,14 +1,6 @@
-"""
-This module processes command line arguments and displays information.
-"""
-
 import argparse
 
-
 def main(arguments):
-    """
-    Prints out details from parsed command line arguments.
-    """
     print(f"Email Address Reporter: {arguments.email_address_reporter}")
     print(f"Email Address Other: {arguments.email_address_other}")
     print(f"Access For: {arguments.access_for}")
@@ -17,7 +9,6 @@ def main(arguments):
     print(f"Access Type: {arguments.accesstype}")
     print(f"Requested Custom Groups: {arguments.requested_custom_groups}")
     print(f"Issue Key: {arguments.issue_key}")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
