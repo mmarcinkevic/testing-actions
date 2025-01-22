@@ -1,22 +1,32 @@
-name: Super-Linter
+---
+name: Lint
 
-on: push
+on: # yamllint disable-line rule:truthy
+  push: null
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
-  super-lint:
-    name: Lint code base
+  build:
+    name: Lint
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
 
-      - name: Run Super-Linter
-        uses: github/super-linter@v7
+      - name: Super-linter
+        uses: super-linter/super-linter@v7.2.1 # x-release-please-version
         env:
-          DEFAULT_BRANCH: master
+          # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          YAML_PRETTIER_FILES: false  # Disable YAML Prettier checks
-          DISABLE_LINTERS: MARKDOWN_PRETTIER  # Disable only Markdown Prettier
