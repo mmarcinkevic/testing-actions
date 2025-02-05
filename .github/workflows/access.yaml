@@ -1,6 +1,7 @@
 name: Run Python Script
 
 on:
+  workflow_dispatch: # This enables manual triggering
   repository_dispatch:
     types: [run-hello-world]
 
